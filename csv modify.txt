@@ -1,0 +1,22 @@
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import lit, input_file_name
+
+# Initialize Spark session
+spark = SparkSession.builder.appName("AppendFilename").getOrCreate()
+
+# Replace with the actual path to your CSV file inside the mounted directory
+csv_file_path = f"{mount_point}/employee.csv"
+
+# Read the CSV file into a DataFrame
+df = spark.read.option("header", "true").csv(csv_file_path)
+
+# Get the filename from the input_file_name function and add it as a new column
+df_with_filename = df.withColumn("filename", lit(input_file_name()))
+
+# Show the resulting DataFrame
+df_with_filename.show()
+
+# You can also write the DataFrame back to a new CSV file with the filename as the third column if needed
+# Replace "output_file.csv" with the desired output file name and path
+output_file_path = f"{mount_point}/output_file.csv"
+df_with_filename.write.option("header", "true").csv(output_file_path, mode="overwrite")

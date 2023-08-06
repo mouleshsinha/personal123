@@ -1,0 +1,59 @@
+{
+    "name": "ADFPipeline",
+    "properties": {
+        "activities": [
+            {
+                "name": "CopyCSVtoSQL",
+                "type": "Copy",
+                "inputs": [
+                    {
+                        "referenceName": "SourceCSV",
+                        "type": "Dataset"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "referenceName": "SinkSQL",
+                        "type": "Dataset"
+                    }
+                ],
+                "typeProperties": {
+                    "source": {
+                        "type": "DelimitedText",
+                        "storeSettings": {
+                            "type": "AzureBlobStorageReadSettings",
+                            "recursive": true
+                        }
+                    },
+                    "sink": {
+                        "type": "AzureSqlSink",
+                        "writeBatchSize": 0,
+                        "writeBatchTimeout": "00:00:00"
+                    },
+                    "enableStaging": false,
+                    "translator": {
+                        "type": "TabularTranslator",
+                        "columnMappings": "filename:filename,t_stamp:t_stamp"
+                    }
+                },
+                "policy": {
+                    "timeout": "7.00:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "scheduler": {
+                    "frequency": "Minute",
+                    "interval": 15
+                }
+            }
+        ],
+        "start": "2023-08-06T00:00:00Z",
+        "end": "2099-12-30T00:00:00Z",
+        "isPaused": false,
+        "hubName": "YourAzureDataFactoryName",
+        "pipelineMode": "Scheduled"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}
